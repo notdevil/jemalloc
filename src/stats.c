@@ -1404,6 +1404,32 @@ stats_general_print(emitter_t *emitter) {
 	CTL_GET("version", &cpv, const char *);
 	emitter_kv(emitter, "version", "Version", emitter_type_string, &cpv);
 
+	/* malloc_conf. */
+	emitter_dict_begin(emitter, "malloc_conf", "MALLOC_CONF settings");
+	CTL_GET("malloc_conf.config", &cpv,  const char *);
+	emitter_kv(emitter, "config", "Set via --with-malloc-conf",
+	    emitter_type_string, &cpv);
+	if (je_mallctl("malloc_conf.file", (void *)&cpv, &cpsz, NULL, 0) == 0) {
+		emitter_kv(emitter, "file", "Set via file", emitter_type_string,
+		    &cpv);
+	}
+	if (je_mallctl("malloc_conf.env_var", (void *)&cpv, &cpsz, NULL, 0) == 0) {
+		emitter_kv(emitter, "env_var", "Set via environment variable",
+		    emitter_type_string, &cpv);
+	}
+	if (je_mallctl("malloc_conf.global_var_malloc_conf", (void *)&cpv, &cpsz,
+	    NULL, 0) == 0) {
+		emitter_kv(emitter, "global_var_malloc_conf",
+	        "Set via global variable malloc_conf", emitter_type_string, &cpv);
+	}
+	if (je_mallctl("malloc_conf.global_var_malloc_conf_2_conf_harder",
+	    (void *)&cpv, &cpsz, NULL, 0) == 0) {
+		emitter_kv(emitter, "global_var_malloc_conf_2_conf_harder",
+	        "Set via global variable malloc_conf_2_conf_harder",
+	        emitter_type_string, &cpv);
+	}
+	emitter_dict_end(emitter); /* Close "malloc_conf" dict. */
+
 	/* config. */
 	emitter_dict_begin(emitter, "config", "Build-time option settings");
 #define CONFIG_WRITE_BOOL(name)						\
@@ -1417,9 +1443,6 @@ stats_general_print(emitter_t *emitter) {
 	CONFIG_WRITE_BOOL(debug);
 	CONFIG_WRITE_BOOL(fill);
 	CONFIG_WRITE_BOOL(lazy_lock);
-	emitter_kv(emitter, "malloc_conf", "config.malloc_conf",
-	    emitter_type_string, &config_malloc_conf);
-
 	CONFIG_WRITE_BOOL(opt_safety_checks);
 	CONFIG_WRITE_BOOL(prof);
 	CONFIG_WRITE_BOOL(prof_libgcc);

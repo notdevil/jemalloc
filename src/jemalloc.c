@@ -57,6 +57,9 @@ const char	*je_malloc_conf_2_conf_harder
 #endif
     ;
 
+const char	*malloc_conf_file;
+const char	*malloc_conf_env_var;
+
 bool	opt_abort =
 #ifdef JEMALLOC_DEBUG
     true
@@ -1011,6 +1014,7 @@ obtain_malloc_conf(unsigned which_source, char buf[PATH_MAX + 1]) {
 #endif
 		buf[linklen] = '\0';
 		ret = buf;
+		malloc_conf_file = ret;
 		break;
 	} case 3: {
 		const char *envname =
@@ -1030,6 +1034,7 @@ obtain_malloc_conf(unsigned which_source, char buf[PATH_MAX + 1]) {
 			/* No configuration specified. */
 			ret = NULL;
 		}
+		malloc_conf_env_var = ret;
 		break;
 	} case 4: {
 		ret = je_malloc_conf_2_conf_harder;

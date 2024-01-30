@@ -80,6 +80,11 @@ CTL_PROTO(thread_allocatedp)
 CTL_PROTO(thread_deallocated)
 CTL_PROTO(thread_deallocatedp)
 CTL_PROTO(thread_idle)
+CTL_PROTO(malloc_conf_config)
+CTL_PROTO(malloc_conf_file)
+CTL_PROTO(malloc_conf_env_var)
+CTL_PROTO(malloc_conf_global_var_malloc_conf)
+CTL_PROTO(malloc_conf_global_var_malloc_conf_2_conf_harder)
 CTL_PROTO(config_cache_oblivious)
 CTL_PROTO(config_debug)
 CTL_PROTO(config_fill)
@@ -920,6 +925,16 @@ static const ctl_named_node_t experimental_node[] = {
 	{NAME("thread"),	CHILD(named, experimental_thread)}
 };
 
+static const ctl_named_node_t malloc_conf_node[] = {
+	{NAME("config"),		CTL(malloc_conf_config)},
+	{NAME("file"),			CTL(malloc_conf_file)},
+	{NAME("env_var"),		CTL(malloc_conf_env_var)},
+	{NAME("global_var_malloc_conf"),
+	    CTL(malloc_conf_global_var_malloc_conf)},
+	{NAME("global_var_malloc_conf_2_conf_harder"),
+	    CTL(malloc_conf_global_var_malloc_conf_2_conf_harder)}
+};
+
 static const ctl_named_node_t	root_node[] = {
 	{NAME("version"),	CTL(version)},
 	{NAME("epoch"),		CTL(epoch)},
@@ -933,7 +948,8 @@ static const ctl_named_node_t	root_node[] = {
 	{NAME("arenas"),	CHILD(named, arenas)},
 	{NAME("prof"),		CHILD(named, prof)},
 	{NAME("stats"),		CHILD(named, stats)},
-	{NAME("experimental"),	CHILD(named, experimental)}
+	{NAME("experimental"),	CHILD(named, experimental)},
+	{NAME("malloc_conf"),	CHILD(named, malloc_conf)}
 };
 static const ctl_named_node_t super_root_node[] = {
 	{NAME(""),		CHILD(named, root)}
@@ -1985,6 +2001,15 @@ label_return:								\
 /******************************************************************************/
 
 CTL_RO_NL_GEN(version, JEMALLOC_VERSION, const char *)
+
+CTL_RO_NL_GEN(malloc_conf_config, config_malloc_conf, const char *)
+CTL_RO_NL_GEN(malloc_conf_file, malloc_conf_file, const char *)
+CTL_RO_NL_GEN(malloc_conf_env_var, malloc_conf_env_var, const char *)
+CTL_RO_NL_CGEN(je_malloc_conf, malloc_conf_global_var_malloc_conf,
+    je_malloc_conf, const char *)
+CTL_RO_NL_CGEN(je_malloc_conf_2_conf_harder,
+    malloc_conf_global_var_malloc_conf_2_conf_harder,
+    je_malloc_conf_2_conf_harder, const char *)
 
 static int
 epoch_ctl(tsd_t *tsd, const size_t *mib, size_t miblen,

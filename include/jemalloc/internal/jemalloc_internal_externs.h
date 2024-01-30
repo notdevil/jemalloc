@@ -38,6 +38,9 @@ extern atomic_zu_t zero_realloc_count;
 extern bool opt_cache_oblivious;
 extern unsigned opt_debug_double_free_max_scan;
 
+extern const char *malloc_conf_file;
+extern const char *malloc_conf_env_var;
+
 /* Escape free-fastpath when ptr & mask == 0 (for sanitization purpose). */
 extern uintptr_t san_cache_bin_nonfast_mask;
 
